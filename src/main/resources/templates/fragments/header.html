@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo} + ' | SpendWise'">SpendWise</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header th:fragment="header" class="border-b border-slate-200 bg-white">
+    <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+        <a th:href="@{/contas}" class="text-xl font-semibold text-emerald-700">SpendWise</a>
+        <div class="flex items-center gap-4 text-sm">
+            <a th:href="@{/correntistas}" class="text-slate-700 hover:text-emerald-700">Correntistas</a>
+            <a th:href="@{/contas}" class="text-slate-700 hover:text-emerald-700">Contas</a>
+        </div>
+    </nav>
+</header>
+</body>
+</html>

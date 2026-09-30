@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="mensagens" class="space-y-3">
+    <div th:if="${mensagem}" class="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800" th:text="${mensagem}"></div>
+    <div th:if="${erro}" class="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800" th:text="${erro}"></div>
+</div>
+</body>
+</html>
