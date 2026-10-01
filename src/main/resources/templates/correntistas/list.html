@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Correntistas')}"></head>
+<body class="bg-slate-50 text-slate-900">
+<header th:replace="~{fragments/header :: header}"></header>
+<main class="mx-auto max-w-6xl px-4 py-8">
+    <div th:replace="~{fragments/mensagens :: mensagens}"></div>
+    <div class="mb-6 flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-semibold">Correntistas</h1>
+            <p class="text-sm text-slate-500">Correntistas cadastrados no sistema.</p>
+        </div>
+        <a th:href="@{/correntistas/form}"
+           class="rounded-md bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-800">
+            Novo correntista
+        </a>
+    </div>
+
+    <div class="overflow-hidden rounded-lg border border-slate-200 bg-white">
+        <table class="min-w-full divide-y divide-slate-200 text-sm">
+            <thead class="bg-slate-50 text-left text-slate-600">
+            <tr>
+                <th class="px-4 py-3">Nome</th>
+                <th class="px-4 py-3">Login</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+            <tr th:each="c : ${correntistas}">
+                <td class="px-4 py-3" th:text="${c.nome}"></td>
+                <td class="px-4 py-3" th:text="${c.login}"></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(correntistas)}">
+                <td colspan="2" class="px-4 py-6 text-center text-slate-500">Nenhum correntista cadastrado.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>
