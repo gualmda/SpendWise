@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Contas')}"></head>
+<body class="bg-slate-50 text-slate-900">
+<header th:replace="~{fragments/header :: header}"></header>
+<main class="mx-auto max-w-6xl px-4 py-8">
+    <div th:replace="~{fragments/mensagens :: mensagens}"></div>
+
+    <div class="mb-6 flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-semibold">Contas</h1>
+            <p class="text-sm text-slate-500">Contas correntes e cartões cadastrados.</p>
+        </div>
+        <a th:href="@{/contas/form}"
+           class="rounded-md bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-800">
+            Nova conta
+        </a>
+    </div>
+
+    <div class="space-y-6">
+        <section th:each="c : ${contas}" class="overflow-hidden rounded-lg border border-slate-200 bg-white">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-4">
+                <div>
+                    <h2 class="font-semibold" th:text="${c.descricao}"></h2>
+                    <p class="text-sm text-slate-500">
+                        <span th:text="${c.numero}"></span>
+                        <span> · </span>
+                        <span th:text="${c.tipo}"></span>
+                        <span> · </span>
+                        <span th:text="${c.correntista.nome}"></span>
+                    </p>
+                </div>
+                <a th:href="@{/transacoes/form/{id}(id=${c.id})}"
+                   class="rounded-md border border-emerald-300 px-3 py-1.5 text-sm text-emerald-700 hover:bg-emerald-50">
+                    Nova transação
+                </a>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200 text-sm">
+                    <thead class="bg-slate-50 text-left text-slate-600">
+                    <tr>
+                        <th class="px-4 py-3">Data</th>
+                        <th class="px-4 py-3">Descrição</th>
+                        <th class="px-4 py-3">Categoria</th>
+                        <th class="px-4 py-3">Movimento</th>
+                        <th class="px-4 py-3">Valor</th>
+                        <th class="px-4 py-3">Comentário</th>
+                        <th class="px-4 py-3 text-right">Ações</th>
+                    </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                    <tr th:each="t : ${c.transacoes}">
+                        <td class="px-4 py-3" th:text="${#temporals.format(t.data, 'dd/MM/yyyy')}"></td>
+                        <td class="px-4 py-3" th:text="${t.descricao}"></td>
+                        <td class="px-4 py-3" th:text="${t.categoria.nome}"></td>
+                        <td class="px-4 py-3" th:text="${t.movimento}"></td>
+                        <td class="px-4 py-3" th:text="${#numbers.formatDecimal(t.valor, 1, 2)}"></td>
+                        <td class="px-4 py-3">
+                            <span th:if="${t.comentario != null}" th:text="${t.comentario.texto}"></span>
+                            <span th:if="${t.comentario == null}" class="text-slate-400">Sem comentário</span>
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="flex flex-wrap justify-end gap-2">
+                                <a th:href="@{/transacoes/edit/{id}(id=${t.id})}"
+                                   class="rounded-md border border-slate-300 px-3 py-1.5">Editar transação</a>
+                                <a th:if="${t.comentario == null}"
+                                   th:href="@{/comentarios/form/{id}(id=${t.id})}"
+                                   class="rounded-md border border-emerald-300 px-3 py-1.5 text-emerald-700">Adicionar comentário</a>
+                                <a th:if="${t.comentario != null}"
+                                   th:href="@{/comentarios/edit/{id}(id=${t.comentario.id})}"
+                                   class="rounded-md border border-slate-300 px-3 py-1.5">Editar comentário</a>
+                                <form th:if="${t.comentario != null}"
+                                      th:action="@{/comentarios/delete/{id}(id=${t.comentario.id})}"
+                                      method="post">
+                                    <button class="rounded-md border border-red-300 px-3 py-1.5 text-red-700">Excluir comentário</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(c.transacoes)}">
+                        <td colspan="7" class="px-4 py-5 text-center text-slate-500">Nenhuma transação cadastrada nesta conta.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <div th:if="${#lists.isEmpty(contas)}"
+             class="rounded-lg border border-slate-200 bg-white p-8 text-center text-slate-500">
+            Nenhuma conta cadastrada.
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

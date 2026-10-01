@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(${edicao ? 'Editar transação' : 'Nova transação'})}"></head>
+<body class="bg-slate-50 text-slate-900">
+<header th:replace="~{fragments/header :: header}"></header>
+<main class="mx-auto max-w-2xl px-4 py-8">
+    <h1 class="mb-6 text-2xl font-semibold" th:text="${edicao ? 'Editar transação' : 'Nova transação'}"></h1>
+
+    <form th:action="${edicao} ? @{/transacoes/update} : @{/transacoes/save}"
+          th:object="${transacao}" method="post"
+          class="space-y-5 rounded-lg border border-slate-200 bg-white p-6">
+        <input th:if="${edicao}" type="hidden" th:field="*{id}">
+
+        <div>
+            <label class="mb-1 block text-sm font-medium">Conta</label>
+            <select name="contaId" class="w-full rounded-md border border-slate-300 px-3 py-2">
+                <option value="">Selecione</option>
+                <option th:each="c : ${contas}"
+                        th:value="${c.id}"
+                        th:text="${c.descricao + ' — ' + c.numero}"
+                        th:selected="${c.id == contaId}"></option>
+            </select>
+        </div>
+        <div>
+            <label class="mb-1 block text-sm font-medium">Data</label>
+            <input th:field="*{data}" type="date" class="w-full rounded-md border border-slate-300 px-3 py-2">
+        </div>
+        <div>
+            <label class="mb-1 block text-sm font-medium">Descrição</label>
+            <input th:field="*{descricao}" class="w-full rounded-md border border-slate-300 px-3 py-2">
+        </div>
+        <div>
+            <label class="mb-1 block text-sm font-medium">Valor</label>
+            <input th:field="*{valor}" type="number" step="0.01" class="w-full rounded-md border border-slate-300 px-3 py-2">
+        </div>
+        <div>
+            <label class="mb-1 block text-sm font-medium">Movimento</label>
+            <select th:field="*{movimento}" class="w-full rounded-md border border-slate-300 px-3 py-2">
+                <option value="">Selecione</option>
+                <option th:each="m : ${movimentos}" th:value="${m}" th:text="${m}"></option>
+            </select>
+        </div>
+        <div>
+            <label class="mb-1 block text-sm font-medium">Categoria</label>
+            <select name="categoriaId" class="w-full rounded-md border border-slate-300 px-3 py-2">
+                <option value="">Selecione</option>
+                <option th:each="c : ${categorias}"
+                        th:value="${c.id}"
+                        th:text="${c.nome}"
+                        th:selected="${c.id == categoriaId}"></option>
+            </select>
+        </div>
+        <div th:if="${!edicao}">
+            <label class="mb-1 block text-sm font-medium">Comentário (opcional)</label>
+            <textarea name="comentarioTexto" rows="4"
+                      class="w-full rounded-md border border-slate-300 px-3 py-2"></textarea>
+        </div>
+        <div class="flex gap-3">
+            <button class="rounded-md bg-emerald-700 px-4 py-2 text-white hover:bg-emerald-800">Salvar</button>
+            <a th:href="@{/contas}" class="rounded-md border border-slate-300 px-4 py-2">Cancelar</a>
+        </div>
+    </form>
+</main>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>
