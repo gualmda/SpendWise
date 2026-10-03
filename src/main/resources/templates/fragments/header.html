@@ -3,24 +3,85 @@
 <head th:fragment="head(titulo)">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#047857">
+    <meta name="description" content="SpendWise — controle simples de contas e movimentações.">
     <title th:text="${titulo} + ' | SpendWise'">SpendWise</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<header th:fragment="header" class="border-b border-slate-200 bg-white">
-    <nav class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
-        <a th:href="@{/}" class="text-xl font-semibold text-emerald-700">SpendWise</a>
-        <div class="flex flex-wrap items-center justify-end gap-4 text-sm">
+<header th:fragment="header" class="sticky top-0 z-40 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
+    <a class="skip-link" href="#conteudo-principal">Pular para o conteúdo</a>
+
+    <nav class="mx-auto flex min-h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6" aria-label="Navegação principal">
+        <a th:href="@{/}"
+           class="inline-flex items-center gap-2.5 rounded-lg font-semibold text-slate-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+           aria-label="SpendWise — ir para o início">
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-700 text-sm font-bold text-white shadow-sm" aria-hidden="true">S</span>
+            <span class="text-lg tracking-tight">SpendWise</span>
+        </a>
+
+        <div class="hidden items-center gap-1 md:flex">
+            <a th:href="@{/}"
+               class="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700">
+                Início
+            </a>
+            <a th:href="@{/contas}"
+               class="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700">
+                Contas
+            </a>
             <a th:if="${usuarioAdmin == true}" th:href="@{/correntistas}"
-               class="text-slate-700 hover:text-emerald-700">Correntistas</a>
-            <a th:href="@{/contas}" class="text-slate-700 hover:text-emerald-700">Contas</a>
+               class="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700">
+                Correntistas
+            </a>
+        </div>
+
+        <div class="hidden items-center gap-3 md:flex">
+            <div class="max-w-48 text-right leading-tight">
+                <p class="truncate text-sm font-semibold text-slate-800" th:text="${usuarioNome}">Usuário</p>
+                <p class="mt-0.5 text-xs text-slate-500" th:text="${usuarioAdmin == true ? 'Administrador' : 'Correntista'}">Correntista</p>
+            </div>
             <form th:action="@{/logout}" method="post">
-                <button class="rounded-md border border-slate-300 px-3 py-1.5 text-slate-700 hover:bg-slate-50">
+                <button type="submit"
+                        class="inline-flex min-h-10 items-center justify-center rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700">
                     Sair
                 </button>
             </form>
         </div>
+
+        <details class="relative md:hidden">
+            <summary class="flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700">
+                <span>Menu</span>
+                <span class="menu-chevron text-slate-400 transition-transform" aria-hidden="true">⌄</span>
+            </summary>
+
+            <div class="absolute right-0 mt-2 w-72 overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+                <div class="border-b border-slate-100 px-3 py-3">
+                    <p class="truncate text-sm font-semibold text-slate-900" th:text="${usuarioNome}">Usuário</p>
+                    <p class="mt-0.5 text-xs text-slate-500" th:text="${usuarioAdmin == true ? 'Administrador' : 'Correntista'}">Correntista</p>
+                </div>
+                <div class="grid gap-1 py-2">
+                    <a th:href="@{/}"
+                       class="rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700">
+                        Início
+                    </a>
+                    <a th:href="@{/contas}"
+                       class="rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700">
+                        Contas
+                    </a>
+                    <a th:if="${usuarioAdmin == true}" th:href="@{/correntistas}"
+                       class="rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700">
+                        Correntistas
+                    </a>
+                </div>
+                <form th:action="@{/logout}" method="post" class="border-t border-slate-100 pt-2">
+                    <button type="submit"
+                            class="flex min-h-11 w-full items-center rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-red-700 transition hover:bg-red-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+                        Sair da conta
+                    </button>
+                </form>
+            </div>
+        </details>
     </nav>
 </header>
 </body>

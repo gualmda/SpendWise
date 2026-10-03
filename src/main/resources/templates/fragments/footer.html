@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <body>
-<footer th:fragment="footer" class="mt-12 border-t border-slate-200 py-6 text-center text-sm text-slate-500">
-    <span>SpendWise</span>
+<footer th:fragment="footer" class="mt-auto border-t border-slate-200 bg-white">
+    <div class="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-6 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <p><span class="font-semibold text-slate-700">SpendWise</span> · Controle financeiro simples.</p>
+        <p class="text-xs text-slate-400">Programação para Web II</p>
+    </div>
 </footer>
 </body>
 </html>

@@ -1,66 +1,138 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head(${edicao ? 'Editar transação' : 'Nova transação'})}"></head>
-<body class="bg-slate-50 text-slate-900">
+<body class="bg-slate-50 text-slate-900 antialiased">
 <header th:replace="~{fragments/header :: header}"></header>
-<main class="mx-auto max-w-2xl px-4 py-8">
-    <h1 class="mb-6 text-2xl font-semibold" th:text="${edicao ? 'Editar transação' : 'Nova transação'}"></h1>
+
+<main id="conteudo-principal" class="mx-auto w-full max-w-2xl px-4 py-8 sm:px-6 lg:py-10">
+    <a th:href="@{/contas}"
+       class="inline-flex items-center gap-2 rounded-lg text-sm font-semibold text-slate-600 transition hover:text-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700">
+        <span aria-hidden="true">←</span>
+        Voltar para contas
+    </a>
+
+    <div class="mt-5">
+        <p class="text-sm font-semibold uppercase tracking-[0.14em] text-emerald-700" th:text="${edicao ? 'Atualização' : 'Movimentação'}">Movimentação</p>
+        <h1 class="mt-1 text-3xl font-bold tracking-tight text-slate-950" th:text="${edicao ? 'Editar transação' : 'Nova transação'}">Nova transação</h1>
+        <p class="mt-2 text-sm leading-6 text-slate-600">
+            <span th:if="${!edicao}">Registre um crédito ou débito e associe a movimentação à categoria correta.</span>
+            <span th:if="${edicao}">Revise os dados abaixo e salve apenas as informações que deseja atualizar.</span>
+        </p>
+    </div>
 
     <form th:action="${edicao} ? @{/transacoes/update} : @{/transacoes/save}"
-          th:object="${transacao}" method="post"
-          class="space-y-5 rounded-lg border border-slate-200 bg-white p-6">
+          th:object="${transacao}"
+          method="post"
+          class="mt-7 space-y-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
         <input th:if="${edicao}" type="hidden" th:field="*{id}">
 
         <div>
-            <label class="mb-1 block text-sm font-medium">Conta</label>
-            <select name="contaId" class="w-full rounded-md border border-slate-300 px-3 py-2">
-                <option value="">Selecione</option>
+            <label for="contaId" class="mb-1.5 block text-sm font-semibold text-slate-800">Conta</label>
+            <select id="contaId"
+                    name="contaId"
+                    required
+                    class="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-950 transition hover:border-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100">
+                <option value="">Selecione uma conta</option>
                 <option th:each="c : ${contas}"
                         th:value="${c.id}"
                         th:text="${c.descricao + ' — ' + c.numero}"
                         th:selected="${c.id == contaId}"></option>
             </select>
         </div>
-        <div>
-            <label class="mb-1 block text-sm font-medium">Data</label>
-            <input th:field="*{data}" type="date" class="w-full rounded-md border border-slate-300 px-3 py-2">
+
+        <div class="grid gap-5 sm:grid-cols-2">
+            <div>
+                <label for="data" class="mb-1.5 block text-sm font-semibold text-slate-800">Data</label>
+                <input id="data"
+                       th:field="*{data}"
+                       type="date"
+                       required
+                       class="min-h-11 w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm text-slate-950 transition hover:border-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100">
+            </div>
+
+            <div>
+                <label for="valor" class="mb-1.5 block text-sm font-semibold text-slate-800">Valor</label>
+                <div class="relative">
+                    <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-sm font-semibold text-slate-500">R$</span>
+                    <input id="valor"
+                           th:field="*{valor}"
+                           type="number"
+                           step="0.01"
+                           min="0.01"
+                           required
+                           inputmode="decimal"
+                           placeholder="0,00"
+                           class="min-h-11 w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-3.5 text-sm text-slate-950 placeholder:text-slate-400 transition hover:border-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100">
+                </div>
+            </div>
         </div>
+
         <div>
-            <label class="mb-1 block text-sm font-medium">Descrição</label>
-            <input th:field="*{descricao}" class="w-full rounded-md border border-slate-300 px-3 py-2">
+            <label for="descricao" class="mb-1.5 block text-sm font-semibold text-slate-800">Descrição</label>
+            <input id="descricao"
+                   th:field="*{descricao}"
+                   type="text"
+                   required
+                   placeholder="Ex.: Pagamento do curso"
+                   class="min-h-11 w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm text-slate-950 placeholder:text-slate-400 transition hover:border-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100">
         </div>
-        <div>
-            <label class="mb-1 block text-sm font-medium">Valor</label>
-            <input th:field="*{valor}" type="number" step="0.01" class="w-full rounded-md border border-slate-300 px-3 py-2">
+
+        <div class="grid gap-5 sm:grid-cols-2">
+            <div>
+                <label for="movimento" class="mb-1.5 block text-sm font-semibold text-slate-800">Movimento</label>
+                <select id="movimento"
+                        th:field="*{movimento}"
+                        required
+                        aria-describedby="movimento-ajuda"
+                        class="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-950 transition hover:border-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100">
+                    <option value="">Selecione</option>
+                    <option th:each="m : ${movimentos}" th:value="${m}" th:text="${m}"></option>
+                </select>
+                <p id="movimento-ajuda" class="mt-1.5 text-xs leading-5 text-slate-500">Crédito representa entrada; Débito representa saída.</p>
+            </div>
+
+            <div>
+                <label for="categoriaId" class="mb-1.5 block text-sm font-semibold text-slate-800">Categoria</label>
+                <select id="categoriaId"
+                        name="categoriaId"
+                        required
+                        class="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-950 transition hover:border-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100">
+                    <option value="">Selecione uma categoria</option>
+                    <option th:each="c : ${categorias}"
+                            th:value="${c.id}"
+                            th:text="${c.nome}"
+                            th:selected="${c.id == categoriaId}"></option>
+                </select>
+            </div>
         </div>
-        <div>
-            <label class="mb-1 block text-sm font-medium">Movimento</label>
-            <select th:field="*{movimento}" class="w-full rounded-md border border-slate-300 px-3 py-2">
-                <option value="">Selecione</option>
-                <option th:each="m : ${movimentos}" th:value="${m}" th:text="${m}"></option>
-            </select>
-        </div>
-        <div>
-            <label class="mb-1 block text-sm font-medium">Categoria</label>
-            <select name="categoriaId" class="w-full rounded-md border border-slate-300 px-3 py-2">
-                <option value="">Selecione</option>
-                <option th:each="c : ${categorias}"
-                        th:value="${c.id}"
-                        th:text="${c.nome}"
-                        th:selected="${c.id == categoriaId}"></option>
-            </select>
-        </div>
+
         <div th:if="${!edicao}">
-            <label class="mb-1 block text-sm font-medium">Comentário (opcional)</label>
-            <textarea name="comentarioTexto" rows="4"
-                      class="w-full rounded-md border border-slate-300 px-3 py-2"></textarea>
+            <label for="comentarioTexto" class="mb-1.5 block text-sm font-semibold text-slate-800">
+                Comentário <span class="font-normal text-slate-400">(opcional)</span>
+            </label>
+            <textarea id="comentarioTexto"
+                      name="comentarioTexto"
+                      rows="4"
+                      aria-describedby="comentario-ajuda"
+                      placeholder="Adicione algum contexto que ajude a lembrar desta movimentação."
+                      class="w-full resize-y rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm text-slate-950 placeholder:text-slate-400 transition hover:border-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100"></textarea>
+            <p id="comentario-ajuda" class="mt-1.5 text-xs leading-5 text-slate-500">Você também poderá adicionar ou editar o comentário depois.</p>
         </div>
-        <div class="flex gap-3">
-            <button class="rounded-md bg-emerald-700 px-4 py-2 text-white hover:bg-emerald-800">Salvar</button>
-            <a th:href="@{/contas}" class="rounded-md border border-slate-300 px-4 py-2">Cancelar</a>
+
+        <div class="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end">
+            <a th:href="@{/contas}"
+               class="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700">
+                Cancelar
+            </a>
+            <button type="submit"
+                    class="inline-flex min-h-11 items-center justify-center rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                    th:text="${edicao ? 'Salvar alterações' : 'Salvar transação'}">
+                Salvar transação
+            </button>
         </div>
     </form>
 </main>
+
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
 </html>

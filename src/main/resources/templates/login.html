@@ -1,37 +1,142 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/header :: head('Login')}"></head>
-<body class="min-h-screen bg-slate-50 text-slate-900">
-<main class="mx-auto flex min-h-screen max-w-md items-center px-4 py-10">
-    <div class="w-full rounded-xl border border-slate-200 bg-white p-7 shadow-sm">
-        <div class="mb-6">
-            <h1 class="text-2xl font-semibold text-emerald-700">SpendWise</h1>
-            <p class="mt-1 text-sm text-slate-500">Entre para acessar suas contas.</p>
+  <head th:replace="~{fragments/header :: head('Login')}"></head>
+  <body class="min-h-screen bg-slate-950 text-slate-900 antialiased">
+    <main
+      id="conteudo-principal"
+      class="grid min-h-screen lg:grid-cols-[0.95fr_1.05fr]"
+    >
+      <section
+        class="hidden bg-emerald-800 px-10 py-12 text-white lg:flex lg:flex-col lg:justify-between"
+        aria-label="Apresentação do SpendWise"
+      >
+        <div>
+          <div class="inline-flex items-center gap-3">
+            <span
+              class="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-lg font-bold text-emerald-800 shadow-sm"
+              aria-hidden="true"
+              >S</span
+            >
+            <span class="text-xl font-semibold tracking-tight">SpendWise</span>
+          </div>
+
+          <div class="mt-24 max-w-xl">
+            <p
+              class="text-sm font-semibold uppercase tracking-[0.16em] text-emerald-100"
+            >
+              Controle financeiro sem complicação
+            </p>
+            <h1
+              class="mt-4 text-4xl font-bold leading-tight tracking-tight xl:text-5xl"
+            >
+              Contas e movimentações organizadas em um só lugar.
+            </h1>
+            <p class="mt-5 max-w-lg text-base leading-7 text-emerald-50/90">
+              Registre contas, acompanhe transações e adicione comentários com
+              uma experiência simples e objetiva.
+            </p>
+          </div>
         </div>
 
-        <div th:if="${erro}" class="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-             th:text="${erro}"></div>
+        <p class="text-sm text-emerald-100/80">
+          SpendWise · Programação para Web II
+        </p>
+      </section>
 
-        <form th:action="@{/login}" method="post" class="space-y-5">
-            <div>
-                <label for="login" class="mb-1 block text-sm font-medium">Login</label>
-                <input id="login" name="login" th:value="${loginInformado}"
-                       class="w-full rounded-md border border-slate-300 px-3 py-2" autofocus>
+      <section
+        class="flex items-center justify-center bg-slate-50 px-4 py-10 sm:px-6 lg:px-12"
+      >
+        <div class="w-full max-w-md">
+          <div class="mb-8 lg:hidden">
+            <div class="inline-flex items-center gap-3">
+              <span
+                class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-700 text-sm font-bold text-white shadow-sm"
+                aria-hidden="true"
+                >S</span
+              >
+              <span class="text-xl font-semibold tracking-tight text-slate-950"
+                >SpendWise</span
+              >
             </div>
+          </div>
+
+          <div
+            class="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/50 sm:p-8"
+          >
             <div>
-                <label for="senha" class="mb-1 block text-sm font-medium">Senha</label>
-                <input id="senha" name="senha" type="password"
-                       class="w-full rounded-md border border-slate-300 px-3 py-2">
+              <p
+                class="text-sm font-semibold uppercase tracking-[0.14em] text-emerald-700"
+              >
+                Acesso ao sistema
+              </p>
+              <h2 class="mt-2 text-3xl font-bold tracking-tight text-slate-950">
+                Bem-vindo de volta
+              </h2>
+              <p class="mt-2 text-sm leading-6 text-slate-600">
+                Informe suas credenciais para continuar.
+              </p>
             </div>
-            <button class="w-full rounded-md bg-emerald-700 px-4 py-2 font-medium text-white hover:bg-emerald-800">
+
+            <div
+              th:if="${erro}"
+              role="alert"
+              class="mt-6 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3.5 text-sm text-red-900"
+            >
+              <span
+                class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-700 text-xs font-bold text-white"
+                aria-hidden="true"
+                >!</span
+              >
+              <span th:text="${erro}"></span>
+            </div>
+
+            <form th:action="@{/login}" method="post" class="mt-6 space-y-5">
+              <div>
+                <label
+                  for="login"
+                  class="mb-1.5 block text-sm font-semibold text-slate-800"
+                  >Login</label
+                >
+                <input
+                  id="login"
+                  name="login"
+                  th:value="${loginInformado}"
+                  type="text"
+                  autocomplete="username"
+                  required
+                  autofocus
+                  placeholder="Digite seu login"
+                  class="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-950 placeholder:text-slate-400 transition hover:border-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100"
+                />
+              </div>
+
+              <div>
+                <label
+                  for="senha"
+                  class="mb-1.5 block text-sm font-semibold text-slate-800"
+                  >Senha</label
+                >
+                <input
+                  id="senha"
+                  name="senha"
+                  type="password"
+                  autocomplete="current-password"
+                  required
+                  placeholder="Digite sua senha"
+                  class="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-950 placeholder:text-slate-400 transition hover:border-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100"
+                />
+              </div>
+
+              <button
+                type="submit"
+                class="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+              >
                 Entrar
-            </button>
-        </form>
-
-        <div class="mt-6 rounded-md bg-slate-50 p-3 text-xs text-slate-500">
-            Administrador inicial: <strong>admin</strong> / <strong>admin123</strong>
+              </button>
+            </form>
+          </div>
         </div>
-    </div>
-</main>
-</body>
+      </section>
+    </main>
+  </body>
 </html>

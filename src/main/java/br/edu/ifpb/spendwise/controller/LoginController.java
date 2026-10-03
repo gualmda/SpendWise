@@ -20,10 +20,8 @@ public class LoginController {
     }
 
     @GetMapping("/")
-    public String inicio(HttpSession session) {
-        return Boolean.TRUE.equals(session.getAttribute("usuarioAdmin"))
-            ? "redirect:/correntistas"
-            : "redirect:/contas";
+    public String inicio() {
+        return "home";
     }
 
     @GetMapping("/login")
@@ -33,8 +31,8 @@ public class LoginController {
 
     @PostMapping("/login")
     public ModelAndView autenticar(@RequestParam String login,
-                                   @RequestParam String senha,
-                                   HttpSession session) {
+            @RequestParam String senha,
+            HttpSession session) {
         Correntista usuario = correntistaService.autenticar(login, senha).orElse(null);
         if (usuario == null) {
             ModelAndView mv = new ModelAndView("login");
@@ -47,7 +45,7 @@ public class LoginController {
         session.setAttribute("usuarioNome", usuario.getNome());
         session.setAttribute("usuarioAdmin", usuario.isAdmin());
 
-        return new ModelAndView(usuario.isAdmin() ? "redirect:/correntistas" : "redirect:/contas");
+        return new ModelAndView("redirect:/");
     }
 
     @PostMapping("/logout")
