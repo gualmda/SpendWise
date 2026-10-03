@@ -25,6 +25,7 @@ public class CorrentistaController {
     public ModelAndView listar() {
         ModelAndView mv = new ModelAndView("correntistas/list");
         mv.addObject("correntistas", correntistaService.listar());
+        mv.addObject("usuarioAdmin", true);
         return mv;
     }
 
@@ -32,6 +33,7 @@ public class CorrentistaController {
     public ModelAndView formulario() {
         ModelAndView mv = new ModelAndView("correntistas/form");
         mv.addObject("correntista", new Correntista());
+        mv.addObject("usuarioAdmin", true);
         return mv;
     }
 
@@ -44,6 +46,7 @@ public class CorrentistaController {
             ModelAndView mv = new ModelAndView("correntistas/form");
             mv.addObject("correntista", correntista);
             mv.addObject("erro", e.getMessage());
+            mv.addObject("usuarioAdmin", true);
             return mv;
         }
 

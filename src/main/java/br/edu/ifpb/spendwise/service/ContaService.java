@@ -23,8 +23,10 @@ public class ContaService {
     }
 
     @Transactional(readOnly = true)
-    public List<Conta> listar() {
-        List<Conta> contas = contaRepository.findAllByOrderByDescricaoAsc();
+    public List<Conta> listar(Long usuarioId, boolean admin) {
+        List<Conta> contas = admin
+            ? contaRepository.findAllByOrderByDescricaoAsc()
+            : contaRepository.findAllByCorrentistaIdOrderByDescricaoAsc(usuarioId);
         contas.forEach(conta -> conta.getTransacoes().size());
         return contas;
     }
@@ -34,9 +36,22 @@ public class ContaService {
             .orElseThrow(() -> new IllegalArgumentException("Conta não encontrada"));
     }
 
+    public Conta buscarAcessivel(Long id, Long usuarioId, boolean admin) {
+        Conta conta = buscar(id);
+        if (!admin && !conta.getCorrentista().getId().equals(usuarioId)) {
+            throw new IllegalArgumentException("Conta não pertence ao correntista logado");
+        }
+        return conta;
+    }
+
     @Transactional
-    public Conta criar(Conta conta, Long correntistaId) {
-        Correntista correntista = correntistaRepository.findById(correntistaId)
+    public Conta criar(Conta conta, Long correntistaId, Long usuarioId, boolean admin) {
+        Long donoId = admin ? correntistaId : usuarioId;
+        if (donoId == null) {
+            throw new IllegalArgumentException("Selecione um correntista");
+        }
+
+        Correntista correntista = correntistaRepository.findById(donoId)
             .orElseThrow(() -> new IllegalArgumentException("Correntista não encontrado"));
 
         conta.setId(null);

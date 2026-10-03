@@ -8,4 +8,5 @@ import br.edu.ifpb.spendwise.model.Conta;
 
 public interface ContaRepository extends JpaRepository<Conta, Long> {
     List<Conta> findAllByOrderByDescricaoAsc();
+    List<Conta> findAllByCorrentistaIdOrderByDescricaoAsc(Long correntistaId);
 }

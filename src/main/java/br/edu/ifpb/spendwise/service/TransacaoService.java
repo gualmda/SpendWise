@@ -29,9 +29,16 @@ public class TransacaoService {
             .orElseThrow(() -> new IllegalArgumentException("Transação não encontrada"));
     }
 
+    public Transacao buscarAcessivel(Long id, Long usuarioId, boolean admin) {
+        Transacao transacao = buscar(id);
+        contaService.buscarAcessivel(transacao.getConta().getId(), usuarioId, admin);
+        return transacao;
+    }
+
     @Transactional
-    public Transacao criar(Transacao transacao, Long contaId, Long categoriaId) {
-        Conta conta = contaService.buscar(contaId);
+    public Transacao criar(Transacao transacao, Long contaId, Long categoriaId,
+                           Long usuarioId, boolean admin) {
+        Conta conta = contaService.buscarAcessivel(contaId, usuarioId, admin);
         Categoria categoria = buscarCategoria(categoriaId);
 
         if (!categoria.isAtiva()) {
@@ -45,9 +52,10 @@ public class TransacaoService {
     }
 
     @Transactional
-    public Transacao atualizar(Transacao dados, Long contaId, Long categoriaId) {
-        Transacao existente = buscar(dados.getId());
-        Conta conta = contaService.buscar(contaId);
+    public Transacao atualizar(Transacao dados, Long contaId, Long categoriaId,
+                               Long usuarioId, boolean admin) {
+        Transacao existente = buscarAcessivel(dados.getId(), usuarioId, admin);
+        Conta conta = contaService.buscarAcessivel(contaId, usuarioId, admin);
         Categoria categoria = buscarCategoria(categoriaId);
 
         boolean mesmaCategoria = existente.getCategoria().getId().equals(categoria.getId());

@@ -13,6 +13,7 @@ import br.edu.ifpb.spendwise.model.Conta;
 import br.edu.ifpb.spendwise.model.TipoConta;
 import br.edu.ifpb.spendwise.service.ContaService;
 import br.edu.ifpb.spendwise.service.CorrentistaService;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/contas")
@@ -27,25 +28,29 @@ public class ContaController {
     }
 
     @GetMapping
-    public ModelAndView listar() {
+    public ModelAndView listar(HttpSession session) {
+        Long usuarioId = usuarioId(session);
+        boolean admin = admin(session);
         ModelAndView mv = new ModelAndView("contas/list");
-        mv.addObject("contas", contaService.listar());
+        mv.addObject("contas", contaService.listar(usuarioId, admin));
+        mv.addObject("usuarioAdmin", admin);
         return mv;
     }
 
     @GetMapping("/form")
-    public ModelAndView formulario() {
-        return formulario(new Conta(), null);
+    public ModelAndView formulario(HttpSession session) {
+        return formulario(new Conta(), null, session);
     }
 
     @PostMapping("/save")
     public ModelAndView salvar(@ModelAttribute Conta conta,
-                               @RequestParam Long correntistaId,
-                               RedirectAttributes redirectAttributes) {
+                               @RequestParam(required = false) Long correntistaId,
+                               RedirectAttributes redirectAttributes,
+                               HttpSession session) {
         try {
-            contaService.criar(conta, correntistaId);
+            contaService.criar(conta, correntistaId, usuarioId(session), admin(session));
         } catch (IllegalArgumentException e) {
-            ModelAndView mv = formulario(conta, correntistaId);
+            ModelAndView mv = formulario(conta, correntistaId, session);
             mv.addObject("erro", e.getMessage());
             return mv;
         }
@@ -54,12 +59,27 @@ public class ContaController {
         return new ModelAndView("redirect:/contas");
     }
 
-    private ModelAndView formulario(Conta conta, Long correntistaId) {
+    private ModelAndView formulario(Conta conta, Long correntistaId, HttpSession session) {
+        boolean admin = admin(session);
         ModelAndView mv = new ModelAndView("contas/form");
         mv.addObject("conta", conta);
         mv.addObject("tipos", TipoConta.values());
         mv.addObject("correntistaId", correntistaId);
-        mv.addObject("correntistas", correntistaService.listar());
+        mv.addObject("admin", admin);
+        mv.addObject("usuarioAdmin", admin);
+        if (admin) {
+            mv.addObject("correntistas", correntistaService.listar());
+        } else {
+            mv.addObject("usuario", correntistaService.buscar(usuarioId(session)));
+        }
         return mv;
+    }
+
+    private Long usuarioId(HttpSession session) {
+        return (Long) session.getAttribute("usuarioId");
+    }
+
+    private boolean admin(HttpSession session) {
+        return Boolean.TRUE.equals(session.getAttribute("usuarioAdmin"));
     }
 }

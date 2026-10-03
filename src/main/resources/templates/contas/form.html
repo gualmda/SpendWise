@@ -29,7 +29,8 @@
             <input th:field="*{diaFechamento}" type="number"
                    class="w-full rounded-md border border-slate-300 px-3 py-2">
         </div>
-        <div>
+
+        <div th:if="${admin}">
             <label class="mb-1 block text-sm font-medium">Correntista</label>
             <select name="correntistaId" class="w-full rounded-md border border-slate-300 px-3 py-2">
                 <option value="">Selecione</option>
@@ -39,6 +40,11 @@
                         th:selected="${c.id == correntistaId}"></option>
             </select>
         </div>
+
+        <div th:if="${!admin}" class="rounded-md bg-slate-50 px-4 py-3 text-sm text-slate-600">
+            A conta será cadastrada para <strong th:text="${usuario.nome}">correntista</strong>.
+        </div>
+
         <div class="flex gap-3">
             <button class="rounded-md bg-emerald-700 px-4 py-2 text-white hover:bg-emerald-800">Salvar</button>
             <a th:href="@{/contas}" class="rounded-md border border-slate-300 px-4 py-2">Cancelar</a>

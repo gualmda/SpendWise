@@ -51,7 +51,7 @@
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                     <tr th:each="t : ${c.transacoes}">
-                        <td class="px-4 py-3" th:text="${#temporals.format(t.data, 'dd/MM/yyyy')}"></td>
+                        <td class="px-4 py-3" th:text="${t.data}"></td>
                         <td class="px-4 py-3" th:text="${t.descricao}"></td>
                         <td class="px-4 py-3" th:text="${t.categoria.nome}"></td>
                         <td class="px-4 py-3" th:text="${t.movimento}"></td>

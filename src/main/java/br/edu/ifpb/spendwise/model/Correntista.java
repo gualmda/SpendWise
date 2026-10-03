@@ -29,6 +29,8 @@ public class Correntista {
     @Column(nullable = false)
     private String senha;
 
+    private Boolean admin = false;
+
     @OneToMany(mappedBy = "correntista", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Conta> contas = new ArrayList<>();
 
@@ -45,6 +47,8 @@ public class Correntista {
     public void setLogin(String login) { this.login = login; }
     public String getSenha() { return senha; }
     public void setSenha(String senha) { this.senha = senha; }
+    public boolean isAdmin() { return Boolean.TRUE.equals(admin); }
+    public void setAdmin(boolean admin) { this.admin = admin; }
     public List<Conta> getContas() { return contas; }
     public void setContas(List<Conta> contas) { this.contas = contas; }
 }

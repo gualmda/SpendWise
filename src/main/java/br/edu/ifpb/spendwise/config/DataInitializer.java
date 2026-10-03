@@ -5,22 +5,28 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.edu.ifpb.spendwise.model.Categoria;
+import br.edu.ifpb.spendwise.model.Correntista;
 import br.edu.ifpb.spendwise.model.Natureza;
 import br.edu.ifpb.spendwise.repository.CategoriaRepository;
+import br.edu.ifpb.spendwise.repository.CorrentistaRepository;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
 
     private final CategoriaRepository categoriaRepository;
+    private final CorrentistaRepository correntistaRepository;
 
-    public DataInitializer(CategoriaRepository categoriaRepository) {
+    public DataInitializer(CategoriaRepository categoriaRepository,
+                           CorrentistaRepository correntistaRepository) {
         this.categoriaRepository = categoriaRepository;
+        this.correntistaRepository = correntistaRepository;
     }
 
     @Override
     @Transactional
     public void run(String... args) {
         criarCategoriasIniciais();
+        criarAdministradorInicial();
     }
 
     private void criarCategoriasIniciais() {
@@ -52,6 +58,15 @@ public class DataInitializer implements CommandLineRunner {
         adicionar("Aporte Renda Variável", Natureza.INVESTIMENTO, 2);
         adicionar("Aporte Reserva Emergencia", Natureza.INVESTIMENTO, 3);
         adicionar("Aporte Previdência", Natureza.INVESTIMENTO, 4);
+    }
+
+    private void criarAdministradorInicial() {
+        Correntista admin = correntistaRepository.findByLogin("admin").orElseGet(Correntista::new);
+        admin.setNome("Administrador");
+        admin.setLogin("admin");
+        admin.setSenha("admin123");
+        admin.setAdmin(true);
+        correntistaRepository.save(admin);
     }
 
     private void adicionar(String nome, Natureza natureza, int ordem) {

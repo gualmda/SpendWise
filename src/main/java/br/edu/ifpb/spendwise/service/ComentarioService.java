@@ -20,8 +20,8 @@ public class ComentarioService {
     }
 
     @Transactional
-    public Comentario criar(Long transacaoId, Comentario comentario) {
-        Transacao transacao = transacaoService.buscar(transacaoId);
+    public Comentario criar(Long transacaoId, Comentario comentario, Long usuarioId, boolean admin) {
+        Transacao transacao = transacaoService.buscarAcessivel(transacaoId, usuarioId, admin);
         if (comentarioRepository.existsByTransacaoId(transacaoId)) {
             throw new IllegalArgumentException("A transação já possui comentário");
         }
@@ -33,21 +33,23 @@ public class ComentarioService {
         return salvo;
     }
 
-    public Comentario buscar(Long id) {
-        return comentarioRepository.findById(id)
+    public Comentario buscarAcessivel(Long id, Long usuarioId, boolean admin) {
+        Comentario comentario = comentarioRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Comentário não encontrado"));
+        transacaoService.buscarAcessivel(comentario.getTransacao().getId(), usuarioId, admin);
+        return comentario;
     }
 
     @Transactional
-    public Comentario atualizar(Comentario dados) {
-        Comentario existente = buscar(dados.getId());
+    public Comentario atualizar(Comentario dados, Long usuarioId, boolean admin) {
+        Comentario existente = buscarAcessivel(dados.getId(), usuarioId, admin);
         existente.setTexto(dados.getTexto());
         return comentarioRepository.save(existente);
     }
 
     @Transactional
-    public void excluir(Long id) {
-        Comentario comentario = buscar(id);
+    public void excluir(Long id, Long usuarioId, boolean admin) {
+        Comentario comentario = buscarAcessivel(id, usuarioId, admin);
         comentario.getTransacao().setComentario(null);
         comentarioRepository.delete(comentario);
     }

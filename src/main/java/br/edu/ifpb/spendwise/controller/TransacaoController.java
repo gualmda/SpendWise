@@ -21,6 +21,7 @@ import br.edu.ifpb.spendwise.repository.CategoriaRepository;
 import br.edu.ifpb.spendwise.service.ComentarioService;
 import br.edu.ifpb.spendwise.service.ContaService;
 import br.edu.ifpb.spendwise.service.TransacaoService;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/transacoes")
@@ -42,15 +43,15 @@ public class TransacaoController {
     }
 
     @GetMapping("/form/{contaId}")
-    public ModelAndView formulario(@PathVariable Long contaId) {
-        contaService.buscar(contaId);
-        return formulario(new Transacao(), contaId, null, false);
+    public ModelAndView formulario(@PathVariable Long contaId, HttpSession session) {
+        contaService.buscarAcessivel(contaId, usuarioId(session), admin(session));
+        return formulario(new Transacao(), contaId, null, false, session);
     }
 
     @GetMapping("/edit/{id}")
-    public ModelAndView editar(@PathVariable Long id) {
-        Transacao transacao = transacaoService.buscar(id);
-        return formulario(transacao, transacao.getConta().getId(), transacao.getCategoria(), true);
+    public ModelAndView editar(@PathVariable Long id, HttpSession session) {
+        Transacao transacao = transacaoService.buscarAcessivel(id, usuarioId(session), admin(session));
+        return formulario(transacao, transacao.getConta().getId(), transacao.getCategoria(), true, session);
     }
 
     @PostMapping("/save")
@@ -58,13 +59,16 @@ public class TransacaoController {
                                @RequestParam Long contaId,
                                @RequestParam Long categoriaId,
                                @RequestParam(required = false) String comentarioTexto,
-                               RedirectAttributes redirectAttributes) {
-        Transacao salva = transacaoService.criar(transacao, contaId, categoriaId);
+                               RedirectAttributes redirectAttributes,
+                               HttpSession session) {
+        Long usuarioId = usuarioId(session);
+        boolean admin = admin(session);
+        Transacao salva = transacaoService.criar(transacao, contaId, categoriaId, usuarioId, admin);
 
         if (comentarioTexto != null && !comentarioTexto.isBlank()) {
             Comentario comentario = new Comentario();
             comentario.setTexto(comentarioTexto);
-            comentarioService.criar(salva.getId(), comentario);
+            comentarioService.criar(salva.getId(), comentario, usuarioId, admin);
         }
 
         redirectAttributes.addFlashAttribute("mensagem", "Transação cadastrada com sucesso.");
@@ -75,8 +79,9 @@ public class TransacaoController {
     public ModelAndView atualizar(@ModelAttribute Transacao transacao,
                                   @RequestParam Long contaId,
                                   @RequestParam Long categoriaId,
-                                  RedirectAttributes redirectAttributes) {
-        transacaoService.atualizar(transacao, contaId, categoriaId);
+                                  RedirectAttributes redirectAttributes,
+                                  HttpSession session) {
+        transacaoService.atualizar(transacao, contaId, categoriaId, usuarioId(session), admin(session));
         redirectAttributes.addFlashAttribute("mensagem", "Transação atualizada com sucesso.");
         return new ModelAndView("redirect:/contas");
     }
@@ -84,13 +89,15 @@ public class TransacaoController {
     private ModelAndView formulario(Transacao transacao,
                                     Long contaId,
                                     Categoria categoriaAtual,
-                                    boolean edicao) {
+                                    boolean edicao,
+                                    HttpSession session) {
         ModelAndView mv = new ModelAndView("transacoes/form");
         mv.addObject("transacao", transacao);
         mv.addObject("contaId", contaId);
         mv.addObject("movimentos", Movimento.values());
         mv.addObject("edicao", edicao);
-        mv.addObject("contas", contaService.listar());
+        mv.addObject("usuarioAdmin", admin(session));
+        mv.addObject("contas", contaService.listar(usuarioId(session), admin(session)));
 
         List<Categoria> categorias = new ArrayList<>(categoriaRepository.findByAtivaTrueOrderByNaturezaAscOrdemAsc());
         if (categoriaAtual != null && !categoriaAtual.isAtiva()
@@ -100,5 +107,13 @@ public class TransacaoController {
         mv.addObject("categorias", categorias);
         mv.addObject("categoriaId", categoriaAtual == null ? null : categoriaAtual.getId());
         return mv;
+    }
+
+    private Long usuarioId(HttpSession session) {
+        return (Long) session.getAttribute("usuarioId");
+    }
+
+    private boolean admin(HttpSession session) {
+        return Boolean.TRUE.equals(session.getAttribute("usuarioAdmin"));
     }
 }
